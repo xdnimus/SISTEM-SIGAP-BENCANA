@@ -6,38 +6,22 @@
     <title>Panel Bantuan - SIGAP</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .hero {
-            background: #007bff;
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .hero h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
         .help-panel {
             max-width: 900px;
             margin: 20px auto;
             padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .help-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .help-section h3 {
             color: #333;
             border-bottom: 2px solid #007bff;
             padding-bottom: 10px;
-            margin-bottom: 15px;
         }
         .help-item {
             margin: 15px 0;
@@ -48,13 +32,15 @@
         .faq-container {
             margin-top: 20px;
         }
+        .faq-item {
+            margin: 10px 0;
+        }
         .faq-question {
             cursor: pointer;
             padding: 10px;
             background: #e7f3ff;
             border-radius: 4px;
             font-weight: bold;
-            transition: background 0.3s;
         }
         .faq-question:hover {
             background: #d0e8ff;
@@ -66,30 +52,12 @@
             border-radius: 4px;
             margin-top: 5px;
         }
-        .contact-info {
-            text-align: center;
-            margin-top: 30px;
-        }
-        .btn {
-            background: #007bff;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        .btn:hover {
-            background: #0056b3;
-        }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <h1>Selamat Datang di Panel Bantuan SIGAP</h1>
-        <p>Temukan informasi dan bantuan yang Anda butuhkan.</p>
-    </div>
-    
     <div class="help-panel">
+        <h1>Panel Bantuan SIGAP</h1>
+        
         <div class="help-section">
             <h3>📖 Panduan Umum</h3>
             <div class="help-item">
@@ -136,7 +104,7 @@
 
         <div class="help-section">
             <h3>📞 Hubungi Kami</h3>
-            <div class="help-item contact-info">
+            <div class="help-item">
                 <strong>Pusat Dukungan</strong>
                 <p>Email: support@sigap.com</p>
                 <p>Telepon: (021) 1234-5678</p>
@@ -144,8 +112,8 @@
             </div>
         </div>
 
-        <div class="contact-info">
-            <a href="../dashboard.php" class="btn">Kembali ke Dashboard</a>
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="../dashboard.php" class="btn btn-primary">Kembali ke Dashboard</a>
         </div>
     </div>
 
