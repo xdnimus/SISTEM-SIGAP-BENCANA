@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buat Penugasan - Admin SIGAP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+  </head>
+  <body class="bg-slate-100">
+    <div class="flex min-h-screen">
+      <aside class="w-64 bg-slate-800 text-white flex-col p-6 hidden md:flex">
+        <div class="text-2xl font-bold mb-8 flex items-center justify-center">
+          Admin Panel
+        </div>
+        <nav class="flex flex-col space-y-2">
+          <a
+            href="dashboard-bnpb.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 font-medium"
+          >
+            <i class="fas fa-tachometer-alt fa-fw"></i>
+            <span>Dashboard</span>
+          </a>
+          <a
+            href="validasi_bnpb.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 font-medium"
+          >
+            <i class="fas fa-inbox fa-fw"></i>
+            <span>Validasi Laporan</span>
+          </a>
+          <a
+            href="penugasan_bnpb.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-slate-700 font-semibold"
+          >
+            <i class="fas fa-clipboard-list fa-fw"></i>
+            <span>Buat Penugasan</span>
+          </a>
+          <a
+            href="/sigap/index.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 font-medium"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5a2 2 0 10-4 0v1"
+              ></path>
+            </svg>
+            <span>Logout</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="flex-1 p-6 md:p-8">
+        <section id="penugasan" class="max-w-4xl mx-auto">
+          <h2 class="text-3xl font-bold text-slate-800 mb-6">
+            Buat Penugasan Baru
+          </h2>
+          <form
+            class="bg-white p-8 rounded-xl shadow-lg border border-slate-200 space-y-6"
+          >
+            <div>
+              <label for="task-name" class="text-sm font-medium text-slate-700"
+                >Nama Tugas</label
+              >
+              <input
+                type="text"
+                id="task-name"
+                placeholder="Contoh: Evakuasi warga di RT 05"
+                class="w-full mt-1 px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+              />
+            </div>
+
+            <div>
+              <label
+                for="task-location"
+                class="text-sm font-medium text-slate-700"
+                >Lokasi</label
+              >
+              <div class="relative mt-1">
+                <input
+                  type="text"
+                  id="task-location"
+                  placeholder="Klik 'Pilih di Peta' untuk menentukan lokasi"
+                  class="w-full pl-3 pr-32 py-2 rounded-lg border border-slate-300 cursor-pointer bg-slate-50"
+                  readonly
+                />
+                <button
+                  type="button"
+                  id="select-location"
+                  class="absolute inset-y-0 right-0 px-4 text-sm font-semibold text-white bg-indigo-600 rounded-r-lg hover:bg-indigo-700 transition-colors"
+                >
+                  Pilih di Peta
+                </button>
+              </div>
+              <input type="hidden" id="latitude" name="latitude" />
+              <input type="hidden" id="longitude" name="longitude" />
+            </div>
+
+            <div>
+              <label
+                for="task-priority"
+                class="text-sm font-medium text-slate-700"
+                >Prioritas</label
+              >
+              <select
+                id="task-priority"
+                class="w-full mt-1 px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+              >
+                <option>Mendesak</option>
+                <option>Penting</option>
+                <option>Normal</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="task-team" class="text-sm font-medium text-slate-700"
+                >Tugaskan ke Tim/Relawan</label
+              >
+              <input
+                type="text"
+                id="task-team"
+                placeholder="Ketik nama tim atau relawan"
+                class="w-full mt-1 px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="w-full px-6 py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+            >
+              Kirim Penugasan
+            </button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <div
+      id="map-modal"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    >
+      <div
+        class="bg-white p-4 rounded-lg shadow-lg w-full h-full max-w-4xl max-h-[80vh] relative flex flex-col"
+      >
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-lg font-semibold">
+            Klik di Peta untuk Memilih Lokasi
+          </h3>
+          <button
+            id="close-map"
+            class="text-gray-500 hover:text-gray-900 text-3xl font-bold z-10"
+          >
+            &times;
+          </button>
+        </div>
+        <div id="map" class="w-full flex-grow rounded z-0"></div>
+      </div>
+    </div>
+
+    <script>
+      // Inisialisasi variabel di luar fungsi
+      let map;
+      let marker;
+      const locationInput = document.getElementById("task-location");
+      const latInput = document.getElementById("latitude");
+      const lonInput = document.getElementById("longitude");
+      const mapModal = document.getElementById("map-modal");
+
+      // Fungsi untuk menginisialisasi atau menampilkan peta
+      function initializeMap() {
+        mapModal.classList.remove("hidden");
+
+        // Inisialisasi peta hanya jika belum ada
+        if (!map) {
+          // Set view awal ke Palembang, Sumatera Selatan
+          map = L.map("map").setView([-2.9761, 104.7754], 13);
+
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution:
+              '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          }).addTo(map);
+
+          // Event listener saat peta di-klik
+          map.on("click", function (e) {
+            const lat = e.latlng.lat;
+            const lon = e.latlng.lng;
+
+            // Tampilkan koordinat di input utama
+            locationInput.value = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+
+            // Simpan di input hidden
+            latInput.value = lat;
+            lonInput.value = lon;
+
+            // Tambahkan atau pindahkan marker
+            if (marker) {
+              marker.setLatLng(e.latlng);
+            } else {
+              marker = L.marker(e.latlng).addTo(map);
+            }
+
+            // Tutup modal setelah lokasi dipilih
+            mapModal.classList.add("hidden");
+          });
+        }
+
+        // Perbaiki bug Leaflet di dalam modal
+        setTimeout(function () {
+          map.invalidateSize();
+        }, 100);
+      }
+
+      // Event listener untuk tombol "Pilih di Peta"
+      document
+        .getElementById("select-location")
+        .addEventListener("click", initializeMap);
+
+      // Event listener untuk tombol "Close"
+      document
+        .getElementById("close-map")
+        .addEventListener("click", function () {
+          mapModal.classList.add("hidden");
+        });
+    </script>
+  </body>
+</html>

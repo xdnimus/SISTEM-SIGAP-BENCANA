@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Validasi Laporan - SIGAP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-slate-100">
+    <div class="flex">
+      <aside
+        class="w-64 bg-slate-800 text-white min-h-screen flex flex-col p-6"
+      >
+        <!-- <aside class="w-64 bg-slate-800 text-white p-6 flex flex-col"></aside> -->
+        <div class="text-2xl font-bold mb-6 flex items-center space-x-3">
+          <span class="mx-auto">Admin Panel</span>
+        </div>
+        <nav class="flex flex-col space-y-2">
+          <a
+            href="dashboard-bnpb.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 font-medium"
+            ><svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+              ></path></svg
+            ><span>Dashboard</span></a
+          >
+          <a
+            href="validasi_bnpb.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-slate-700 font-semibold"
+            ><svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path></svg
+            ><span>Validasi Laporan</span></a
+          >
+          <a
+            href="penugasan_bnpb.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 font-medium"
+            ><svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              ></path></svg
+            ><span>Buat Penugasan</span></a
+          >
+          <a
+            href="/sigap/index.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 font-medium"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5a2 2 0 10-4 0v1"
+              ></path>
+            </svg>
+            <span>Logout</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="flex-1 p-8">
+        <h1 class="text-3xl font-bold text-slate-800 mb-6">
+          Validasi Laporan Tim Lapangan
+        </h1>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-slate-700">
+              Laporan Menunggu Validasi
+            </h2>
+            <div class="flex items-center space-x-2">
+              <input
+                type="text"
+                placeholder="Cari relawan..."
+                class="px-3 py-1.5 border border-slate-300 rounded-md text-sm"
+              />
+              <button
+                class="px-3 py-1.5 bg-slate-800 text-white rounded-md text-sm hover:bg-slate-700"
+              >
+                Cari
+              </button>
+            </div>
+          </div>
+
+          <table class="min-w-full">
+            <thead class="bg-slate-50">
+              <tr>
+                <th
+                  class="py-3 px-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                >
+                  Waktu
+                </th>
+                <th
+                  class="py-3 px-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                >
+                  Tim/Relawan
+                </th>
+                <th
+                  class="py-3 px-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                >
+                  Laporan
+                </th>
+                <th
+                  class="py-3 px-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                >
+                  Dokumentasi
+                </th>
+                <th
+                  class="py-3 px-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                >
+                  Aksi
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr class="hover:bg-slate-50">
+                <td class="py-4 px-4 text-sm text-slate-700">15:05</td>
+                <td class="py-4 px-4 text-sm font-medium text-slate-900">
+                  Budi Sanjaya
+                </td>
+                <td class="py-4 px-4 text-sm text-slate-700 max-w-xs truncate">
+                  Status: Tiba di Lokasi Kertapati. Memulai evakuasi.
+                </td>
+                <td class="py-4 px-4 text-sm">
+                  <a
+                    href="#"
+                    class="text-blue-600 hover:underline flex items-center space-x-1"
+                  >
+                    <i class="fas fa-image"></i>
+                    <span>Lihat Foto</span>
+                  </a>
+                </td>
+                <td class="py-4 px-4 flex space-x-2">
+                  <button
+                    class="px-3 py-1.5 text-xs font-medium rounded-md bg-green-100 text-green-700 hover:bg-green-600 hover:text-white transition-colors"
+                  >
+                    Validasi
+                  </button>
+                  <button
+                    class="px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 text-red-700 hover:bg-red-600 hover:text-white transition-colors"
+                  >
+                    Tolak
+                  </button>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-slate-50">
+                <td class="py-4 px-4 text-sm text-slate-700">14:58</td>
+                <td class="py-4 px-4 text-sm font-medium text-slate-900">
+                  Tim Alfa
+                </td>
+                <td class="py-4 px-4 text-sm text-slate-700 max-w-xs truncate">
+                  Bantuan logistik tahap 1 untuk Sako telah didistribusikan.
+                </td>
+                <td class="py-4 px-4 text-sm">
+                  <a
+                    href="#"
+                    class="text-blue-600 hover:underline flex items-center space-x-1"
+                  >
+                    <i class="fas fa-image"></i>
+                    <span>Lihat Foto</span>
+                  </a>
+                </td>
+                <td class="py-4 px-4 flex space-x-2">
+                  <button
+                    class="px-3 py-1.5 text-xs font-medium rounded-md bg-green-100 text-green-700 hover:bg-green-600 hover:text-white transition-colors"
+                  >
+                    Validasi
+                  </button>
+                  <button
+                    class="px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 text-red-700 hover:bg-red-600 hover:text-white transition-colors"
+                  >
+                    Tolak
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

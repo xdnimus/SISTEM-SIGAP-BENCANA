@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIGAP - Sistem Informasi Gempa dan Antisipasi Bencana</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      #map {
+        height: 400px;
+      }
+      .leaflet-popup-content {
+        margin: 13px 19px;
+      }
+      .emergency-alert {
+        animation: pulse 2s infinite;
+      }
+      .camera-container {
+        position: relative;
+      }
+      .camera-frame {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 240px;
+        height: 320px;
+        border: 3px solid #ef4444;
+        border-radius: 12px;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        }
+      }
+    </style>
+<header class="bg-red-600 text-white shadow-lg relative z-20">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-shield-alt text-2xl"></i>
+                    <a href="#home" class="text-xl font-bold">SIGAP</a>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#home" class="hover:underline">Beranda</a>
+                    <a href="#report" class="hover:underline">Lapor Bencana</a>
+                    <a href="#map-section" class="hover:underline">Peta</a>
+                    <a href="#tracking" class="hover:underline">Tracking</a>
+                    <a href="#info" class="hover:underline">Edukasi</a>
+                </nav>
+                <a href="#login" id="loginBtnDesktop" class="hidden md:block bg-white text-red-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-200">
+                    Login
+                </a>
+                <button id="burger-btn" class="md:hidden focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+
+    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-64 bg-red-700 text-white p-4 space-y-4 transform translate-x-full transition-transform duration-300 ease-in-out z-40">
+      <div class="flex justify-end">
+        <button id="close-btn" class="focus:outline-none">
+          <i class="fas fa-times text-2xl"></i>
+        </button>
+      </div>
+      <nav class="flex flex-col items-start space-y-3">
+        <a href="#home" class="hover:underline">Beranda</a>
+        <a href="#report" class="hover:underline">Lapor Bencana</a>
+        <a href="#map-section" class="hover:underline">Peta</a>
+        <a href="#tracking" class="hover:underline">Tracking</a>
+        <a href="#info" class="hover:underline">Edukasi</a>
+        <a href="rlwn/login.php"  class="bg-white text-red-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-200 mt-4">
+          Login
+        </a>
+      </nav>
+    </div>
+
+    <div id="loginModal" class="fixed inset-0 hidden items-center justify-center z-50 p-4 bg-black bg-opacity-50">
+      <div id="loginModalContent" class="bg-white rounded-lg p-6 max-w-sm w-full mx-4 shadow-lg transform transition-transform scale-95">
+        <div class="text-right">
+          <button id="closeLoginModal" class="text-gray-500 hover:text-gray-800 focus:outline-none">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <h3 class="text-2xl font-bold mb-4 text-center text-gray-800">Welcome Back!</h3>
+        <p class="text-sm text-gray-600 mb-6 text-center">Login to access your account</p>
+        <form id="loginForm" class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" id="email" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none" placeholder="Enter your email" required />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+            <input type="password" id="password" class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none" placeholder="Enter your password" required />
+          </div>
+          <div class="flex items-center justify-between">
+            <label class="flex items-center text-sm text-gray-600">
+              <input type="checkbox" class="mr-2 focus:ring-red-500" />
+              Remember me
+            </label>
+            <a href="#" class="text-sm text-red-600 hover:underline">Forgot password?</a>
+          </div>
+          <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-transform transform hover:scale-105">
+            Login
+          </button>
+        </form>
+        <p class="text-sm text-gray-600 mt-6 text-center">
+          Don't have an account? 
+          <a href="#" class="text-red-600 font-semibold hover:underline">Sign up</a>
+        </p>
+      </div>
+    </div>
+  
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // === Logika untuk Menu Mobile ===
+            const burgerBtn = document.getElementById('burger-btn');
+            const closeBtn = document.getElementById('close-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('overlay');
+
+            function openMobileMenu() {
+                mobileMenu.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+            }
+            function closeMobileMenu() {
+                mobileMenu.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+            }
+            burgerBtn.addEventListener('click', openMobileMenu);
+            closeBtn.addEventListener('click', closeMobileMenu);
+
+            // === Logika untuk Modal Login ===
+            const loginBtnDesktop = document.getElementById('loginBtnDesktop');
+            const loginBtnMobile = document.getElementById('loginBtnMobile');
+            const loginModal = document.getElementById('loginModal');
+            const closeLoginModal = document.getElementById('closeLoginModal');
+
+            function openLoginModal() {
+                loginModal.classList.remove('hidden');
+                loginModal.classList.add('flex');
+                overlay.classList.remove('hidden'); // Tampilkan juga overlay
+                closeMobileMenu(); // Tutup menu mobile jika terbuka
+            }
+            function closeLoginModalFunc() {
+                loginModal.classList.add('hidden');
+                loginModal.classList.remove('flex');
+                // Jangan sembunyikan overlay jika menu mobile masih terbuka
+                if (mobileMenu.classList.contains('translate-x-full')) {
+                    overlay.classList.add('hidden');
+                }
+            }
+
+            loginBtnDesktop.addEventListener('click', (e) => { e.preventDefault(); openLoginModal(); });
+            loginBtnMobile.addEventListener('click', (e) => { e.preventDefault(); openLoginModal(); });
+            closeLoginModal.addEventListener('click', closeLoginModalFunc);
+            
+            // Tutup modal/menu saat overlay diklik
+            overlay.addEventListener('click', () => {
+                closeMobileMenu();
+                closeLoginModalFunc();
+            });
+        });
+    </script>
+
+    </div>
+      <script>
+          const burgerBtn = document.getElementById('burger-btn');
+          const closeBtn = document.getElementById('close-btn');
+          const mobileMenu = document.getElementById('mobile-menu');
+          const overlay = document.getElementById('overlay');
+          const navLinks = mobileMenu.querySelectorAll('a');
+
+          // Fungsi untuk membuka menu
+          function openMenu() {
+          mobileMenu.classList.remove('translate-x-full'); // Geser menu ke dalam layar
+          overlay.classList.remove('hidden'); // Tampilkan overlay
+          }
+
+          // Fungsi untuk menutup menu
+          function closeMenu() {
+          mobileMenu.classList.add('translate-x-full'); // Geser menu ke luar layar
+          overlay.classList.add('hidden'); // Sembunyikan overlay
+          }
+
+          // Tambahkan event listener
+          burgerBtn.addEventListener('click', openMenu);
+          closeBtn.addEventListener('click', closeMenu);
+          overlay.addEventListener('click', closeMenu); // Menu juga tertutup saat overlay diklik
+
+          // Tutup menu saat salah satu link di navbar diklik
+          navLinks.forEach(link => {
+          link.addEventListener('click', closeMenu);
+          });
+      </script>
+
+    <!-- Emergency Alert Banner -->
+    <div class="emergency-alert bg-red-500 text-white py-2 px-4 text-center">
+      <div class="container mx-auto flex items-center justify-center space-x-2">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span class="font-semibold"
+          >PERINGATAN: Gempa 5.8 SR terjadi di Jawa Barat. Status: WASPADA</span
+        >
+        <button
+          class="ml-4 bg-red-700 px-3 py-1 rounded hover:bg-red-800"
+          onclick="showEarthquakeDetails()"
+        >
+          Detail
+        </button>
+
+        <!-- Modal for Earthquake Details -->
+        <div
+          id="earthquakeDetailsModal"
+          class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50"
+        >
+          <div class="bg-white rounded-lg p-6 max-w-md mx-4 animate-fade-in">
+            <div class="text-center">
+              <h3 class="text-2xl font-bold mb-4 text-red-600">Detail Gempa</h3>
+              <p class="text-gray-700 mb-4 leading-relaxed">
+                Gempa berkekuatan
+                <span class="font-semibold">5.8 SR</span> terjadi di Jawa Barat
+                pada pukul <span class="font-semibold">14:30 WIB</span>. Pusat
+                gempa berada di kedalaman
+                <span class="font-semibold">10 km</span>.
+              </p>
+              <div class="relative mb-4">
+                <img
+                  src="img/detail_gempa.jpg"
+                  alt="Ilustrasi Gempa"
+                  class="rounded-lg mx-auto shadow-lg hover:scale-105 transition-transform duration-300"
+                />
+                <div
+                  class="absolute bottom-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded"
+                >
+                  WASPADA
+                </div>
+              </div>
+              <p class="text-sm text-gray-500 mb-4">
+                Status: <span class="text-red-600 font-semibold">WASPADA</span>
+              </p>
+              <div class="flex justify-center space-x-4">
+                <button
+                  onclick="closeEarthquakeDetails()"
+                  class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          function showEarthquakeDetails() {
+            document
+              .getElementById("earthquakeDetailsModal")
+              .classList.remove("hidden");
+          }
+
+          function closeEarthquakeDetails() {
+            document
+              .getElementById("earthquakeDetailsModal")
+              .classList.add("hidden");
+          }
+        </script>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+      <!-- Hero Section -->
+      <!-- Slideshow Section -->
+
+      <section id="home" class="mb-12">
+        <div class="grid md:grid-cols-2 gap-8 items-center p-8">
+          <!-- tambah padding di grid -->
+          <div>
+            <h2 class="text-5xl font-bold text-gray-800 mb-6">
+              SIGAP Waspada Bencana, Selamatkan Nyawa
+            </h2>
+            <p class="text-gray-600 mb-8 leading-relaxed">
+              Platform terintegrasi untuk deteksi dini, pelaporan masyarakat,
+              dan koordinasi tanggap darurat bencana. Sistem ini dilengkapi
+              dengan
+              <span class="font-semibold text-gray-800"
+                >dashboard pemantauan real-time</span
+              >,
+              <span class="font-semibold text-gray-800">notifikasi cepat</span>
+              ke warga terdampak, serta
+              <span class="font-semibold text-gray-800"
+                >integrasi posko & tim relawan</span
+              >
+              guna memastikan distribusi bantuan lebih efektif dan respons
+              bencana lebih terarah.
+            </p>
+
+            <div class="flex space-x-6">
+              <!-- jarak antar tombol lebih besar -->
+              <a
+                href="#report"
+                class="bg-red-600 text-white px-8 py-4 rounded-xl hover:bg-red-700 transition"
+              >
+                <i class="fas fa-plus-circle mr-2"></i>Lapor Bencana
+              </a>
+              <a
+                href="#map-section"
+                class="border border-red-600 text-red-600 px-8 py-4 rounded-xl hover:bg-red-50 transition"
+              >
+                <i class="fas fa-map-marker-alt mr-2"></i>Lihat Peta
+              </a>
+            </div>
+          </div>
+
+          <div class="relative text-center">
+            <div class="text-7xl font-extrabold text-red-600">1,247</div>
+            <div class="text-2xl text-gray-600 mt-2">Laporan Aktif</div>
+          </div>
+        </div>
+      </section>
+
+
+          <style>
+            .slide {
+              display: none;
+            }
+            .active {
+              display: flex;
+            }
+          </style>
+        </head>
+        <body class="bg-gray-100">
+          <section id="slideshow" class="mb-12">
+            <h2
+              class="text-4xl font-extrabold text-gray-800 mb-8 text-center leading-tight"
+            >
+              Status & Informasi Bencana Terkini
+            </h2>
+            <div
+              class="relative max-w-5xl mx-auto rounded-xl shadow-2xl overflow-hidden border border-gray-200"
+            >
+              <!-- Slide 1 -->
+              <div
+                class="slide active h-[400px] bg-cover bg-center flex flex-col items-center justify-center text-white p-8 text-center"
+                style="
+                  background-image: url('https://img.antaranews.com/cache/1200x800/2024/11/07/WhatsApp-Image-2024-11-07-at-08.23.26.jpeg.webp');
+                "
+              >
+                <h3 class="text-2xl md:text-3xl font-bold drop-shadow-lg">
+                  Status Gunung Merapi
+                </h3>
+                <p
+                  class="max-w-xl mx-auto text-lg md:text-xl leading-relaxed drop-shadow-md"
+                >
+                  Level Siaga (Level III) - Radius 5 km dari puncak dilarang
+                  aktivitas. Warga diminta mengikuti arahan BPBD setempat untuk
+                  evakuasi mandiri.
+                </p>
+              </div>
+
+              <!-- Slide 2 -->
+              <div
+                class="slide h-[400px] bg-cover bg-center flex flex-col items-center justify-center text-white p-8 text-center"
+                style="
+                  background-image: url('https://awsimages.detik.net.id/community/media/visual/2023/02/18/banjir-bengawan-solo-hari-ini-lokasi-dampak-hingga-kondisi-terkini-1_169.jpeg?w=1200');
+                "
+              >
+                <h3 class="text-2xl md:text-3xl font-bold drop-shadow-lg">
+                  Kondisi Banjir Palembang
+                </h3>
+                <p
+                  class="max-w-xl mx-auto text-lg md:text-xl leading-relaxed drop-shadow-md"
+                >
+                  Beberapa titik di kawasan Seberang Ulu dan Ilir Timur terendam
+                  banjir setinggi 30-70 cm. Waspadai arus deras di sekitar anak
+                  Sungai Musi.
+                </p>
+              </div>
+
+              <!-- Slide 3 -->
+              <div
+                class="slide h-[400px] bg-cover bg-center flex flex-col items-center justify-center text-white p-8 text-center"
+                style="
+                  background-image: url('https://haikalteng.id/files/berita/03042023125157_0.jpeg');
+                "
+              >
+                <h3 class="text-2xl md:text-3xl font-bold drop-shadow-lg">
+                  Arahan Evakuasi Mandiri
+                </h3>
+                <p
+                  class="max-w-xl mx-auto text-lg md:text-xl leading-relaxed drop-shadow-md"
+                >
+                  Gunakan jalur evakuasi menuju Stadion Gelora Sriwijaya untuk
+                  area Jakabaring terdampak. Tim relawan siap memandu di setiap
+                  posko.
+                </p>
+              </div>
+
+              <button
+                id="prevBtn"
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 hover:bg-opacity-70 text-white rounded-full w-12 h-12 flex items-center justify-center z-10 transition-opacity"
+                aria-label="Sebelumnya"
+                type="button"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button
+                id="nextBtn"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 hover:bg-opacity-70 text-white rounded-full w-12 h-12 flex items-center justify-center z-10 transition-opacity"
+                aria-label="Selanjutnya"
+                type="button"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </section>
+
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              let currentSlideIndex = 0;
+              const slides = document.querySelectorAll(".slide");
+              const totalSlides = slides.length;
+              const nextBtn = document.getElementById("nextBtn");
+              const prevBtn = document.getElementById("prevBtn");
+              let slideInterval;
+
+              // Fungsi utama untuk menampilkan slide
+              function showSlide(index) {
+                // Sembunyikan semua slide
+                slides.forEach((slide) => {
+                  slide.classList.remove("active");
+                });
+
+                // Tampilkan slide yang dituju
+                slides[index].classList.add("active");
+              }
+
+              // Fungsi untuk pindah ke slide berikutnya
+              function nextSlide() {
+                currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+                showSlide(currentSlideIndex);
+              }
+
+              // Fungsi untuk pindah ke slide sebelumnya
+              function prevSlide() {
+                currentSlideIndex =
+                  (currentSlideIndex - 1 + totalSlides) % totalSlides;
+                showSlide(currentSlideIndex);
+              }
+
+              // Fungsi untuk memulai timer slideshow otomatis
+              function startSlideShow() {
+                slideInterval = setInterval(nextSlide, 5000); // Ganti slide setiap 5 detik
+              }
+
+              // Fungsi untuk mereset timer saat tombol diklik
+              function resetTimer() {
+                clearInterval(slideInterval);
+                startSlideShow();
+              }
+
+              // Tambahkan event listener ke tombol
+              nextBtn.addEventListener("click", () => {
+                nextSlide();
+                resetTimer();
+              });
+
+              prevBtn.addEventListener("click", () => {
+                prevSlide();
+                resetTimer();
+              });
+
+              // Inisialisasi slideshow
+              showSlide(currentSlideIndex); // Tampilkan slide pertama
+              startSlideShow(); // Mulai slideshow otomatis
+            });
+          </script>
+        </body>
+      </html>
+
+      <!-- Report Form Section -->
+      <section id="report" class="mb-12 bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Laporkan Kejadian Bencana
+        </h2>
+
+        <form id="reportForm" class="grid md:grid-cols-2 gap-6">
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Kategori Bencana *</label
+            >
+            <select
+              id="disasterCategory"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+              required
+            >
+              <option value="">Pilih Jenis Bencana</option>
+              <option value="gempa">Gempa Bumi</option>
+              <option value="banjir">Banjir</option>
+              <option value="kebakaran">Kebakaran</option>
+              <option value="longsor">Tanah Longsor</option>
+              <option value="erupsi">Erupsi Gunung</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Deskripsi Kejadian *</label
+            >
+            <textarea
+              id="description"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+              rows="3"
+              placeholder="Jelaskan secara detail apa yang terjadi..."
+              required
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Perkiraan Jumlah Korban</label
+            >
+            <input
+              id="victims"
+              type="number"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+              placeholder="0"
+              min="0"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Kebutuhan Mendesak</label
+            >
+            <select
+              id="urgentNeeds"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+            >
+              <option value="">Pilih Kebutuhan</option>
+              <option value="evakuasi">Evakuasi</option>
+              <option value="makanan">Bantuan Makanan</option>
+              <option value="obat">Bantuan Obat-obatan</option>
+              <option value="selimut">Selimut dan Pakaian</option>
+              <option value="lainnya">Lainnya</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Lokasi Kejadian</label
+            >
+            <div class="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                class="p-3 border border-gray-300 rounded-lg"
+                placeholder="Latitude"
+                id="latitude"
+                readonly
+              />
+              <input
+                type="text"
+                class="p-3 border border-gray-300 rounded-lg"
+                placeholder="Longitude"
+                id="longitude"
+                readonly
+              />
+            </div>
+            <button
+              type="button"
+              onclick="getLocation()"
+              class="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            >
+              <i class="fas fa-location-arrow mr-2"></i>Dapatkan Lokasi Saat Ini
+            </button>
+          </div>
+
+          <!-- Foto Selfie dengan Kamera Langsung -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Ambil Foto Langsung (Selfie dengan Lokasi)</label
+            >
+            <div class="border border-gray-300 rounded-lg p-4 bg-gray-50">
+              <div class="camera-container mb-4">
+                <video
+                  id="video"
+                  autoplay
+                  playsinline
+                  class="w-full rounded-md"
+                  style="max-height: 400px; background: #000"
+                ></video>
+                <div class="camera-frame"></div>
+              </div>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <button
+                  type="button"
+                  id="captureBtn"
+                  class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                >
+                  <i class="fas fa-camera mr-2"></i>Ambil Foto
+                </button>
+                <button
+                  type="button"
+                  id="switchCamera"
+                  class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+                >
+                  <i class="fas fa-sync-alt mr-2"></i>Ganti Kamera
+                </button>
+              </div>
+              <canvas id="canvas" class="hidden"></canvas>
+              <div id="photoPreview" class="mb-2 text-center hidden">
+                <h4 class="font-semibold text-gray-700 mb-2">Preview Foto</h4>
+                <img
+                  id="previewImage"
+                  class="rounded-md max-w-full h-auto border-2 border-green-500 mx-auto"
+                  style="max-height: 200px"
+                />
+                <div id="photoLocationInfo" class="text-sm text-green-600 mt-2">
+                  <i class="fas fa-check-circle"></i> Lokasi foto berhasil
+                  direkam
+                </div>
+                <button
+                  type="button"
+                  id="retakeBtn"
+                  class="mt-2 bg-yellow-500 text-white px-3 py-1 rounded text-sm hover:bg-yellow-600"
+                >
+                  <i class="fas fa-redo mr-1"></i>Ambil Ulang
+                </button>
+              </div>
+              <p class="text-sm text-gray-600 mt-4">
+                <i class="fas fa-info-circle"></i> Foto dan lokasi Anda akan
+                otomatis terekam untuk validasi laporan.
+              </p>
+            </div>
+          </div>
+
+          <div class="md:col-span-2">
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm text-yellow-700">
+                    <strong>Perhatian:</strong> Pastikan informasi yang
+                    dilaporkan akurat. Lokasi foto akan digunakan untuk validasi
+                    laporan. Laporan palsu dapat dikenai sanksi.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="md:col-span-2 text-center">
+            <button
+              type="submit"
+              class="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 transition"
+            >
+              <i class="fas fa-paper-plane mr-2"></i>Kirim Laporan
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Interactive Map Section -->
+      <section id="map-section" class="mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Peta Interaktif Bencana
+        </h2>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div id="map"></div>
+          <div class="p-4 bg-gray-50">
+            <div class="flex flex-wrap gap-4">
+              <div class="flex items-center">
+                <div class="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
+                <span class="text-sm">Gempa Bumi</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
+                <span class="text-sm">Banjir</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-4 h-4 bg-orange-500 rounded-full mr-2"></div>
+                <span class="text-sm">Kebakaran</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+                <span class="text-sm">Laporan Tervalidasi</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tracking Section -->
+      <section id="tracking" class="mb-12 bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Cek Status Laporan
+        </h2>
+        <div class="max-w-md mx-auto">
+          <div class="flex space-x-2">
+            <input
+              type="text"
+              placeholder="Masukkan Tracking ID"
+              class="flex-1 p-3 border border-gray-300 rounded-lg"
+              id="trackingInput"
+            />
+            <button
+              onclick="checkTracking()"
+              class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700"
+            >
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+
+          <div id="trackingResult" class="mt-6 hidden">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-semibold text-lg mb-4">
+                Status Laporan: <span class="text-green-600">Tervalidasi</span>
+              </h3>
+              <div class="space-y-3">
+                <div class="flex justify-between">
+                  <span>Tracking ID:</span>
+                  <span class="font-mono">SIGAP20240615001</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Jenis Bencana:</span>
+                  <span>Gempa Bumi</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Lokasi:</span>
+                  <span>Bandung, Jawa Barat</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Tanggal Lapor:</span>
+                  <span>15/06/2024 14:30</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Status Penanganan:</span>
+                  <span class="bg-green-100 text-green-800 px-2 py-1 rounded"
+                    >Tim Dalam Perjalanan</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Information & Education Section -->
+      <section id="info" class="mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Informasi dan Edukasi Bencana
+        </h2>
+
+        <!-- Educational Video Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group">
+        <div class="text-center mb-4">
+          <i class="fas fa-house-crack text-3xl text-yellow-500 mb-2 group-hover:text-yellow-600 transition-colors"></i>
+          <h3 class="font-semibold text-lg group-hover:text-yellow-600 transition-colors">Tanggap Darurat Bencana</h3>
+        </div>
+        <video class="rounded-md w-full aspect-video" src="img/edukasi1.mp4" controls title="Video Edukasi Gempa Bumi"></video>
+        <p class="text-sm text-gray-600 mt-4">
+          Pelajari langkah-langkah penting untuk menghadapi gempa bumi, termasuk cara berlindung dan evakuasi.
+        </p>
+          </div>
+
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group">
+        <div class="text-center mb-4">
+          <i class="fas fa-water text-3xl text-blue-500 mb-2 group-hover:text-blue-600 transition-colors"></i>
+          <h3 class="font-semibold text-lg group-hover:text-blue-600 transition-colors">Siaga Banjir</h3>
+        </div>
+        <video class="rounded-md w-full aspect-video" src="img/edukasi2.mp4" controls title="Video Edukasi Siaga Banjir"></video>
+        <p class="text-sm text-gray-600 mt-4">
+          Ketahui cara menghadapi banjir, mulai dari persiapan darurat hingga tindakan penyelamatan diri.
+        </p>
+          </div>
+
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group">
+        <div class="text-center mb-4">
+            <i class="fas fa-mountain text-3xl text-orange-500 mb-2 group-hover:text-orange-600 transition-colors"></i>
+          <h3 class="font-semibold text-lg group-hover:text-orange-600 transition-colors">Waspada Longsor</h3>
+        </div>
+        <video class="rounded-md w-full aspect-video" src="img/edukasi3.mp4" controls title="Video Edukasi Waspada Longsor"></video>
+        <p class="text-sm text-gray-600 mt-4">
+          Pelajari tanda-tanda tanah longsor dan langkah-langkah penyelamatan untuk mengurangi risiko.
+        </p>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          <!-- Emergency Tips -->
+          <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+        <div class="text-center mb-4">
+          <i class="fas fa-first-aid text-3xl text-red-500 mb-2"></i>
+          <h3 class="font-semibold text-lg">Tips Darurat</h3>
+        </div>
+        <ul class="space-y-2 text-sm">
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+            <span>Tetap tenang dan hindari kepanikan</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+            <span>Ikuti arahan dari pihak berwenang</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+            <span>Siapkan tas darurat dengan kebutuhan penting</span>
+          </li>
+        </ul>
+          </div>
+
+          <!-- Evacuation Points -->
+          <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+        <div class="text-center mb-4">
+          <i class="fas fa-map-marker-alt text-3xl text-blue-500 mb-2"></i>
+          <h3 class="font-semibold text-lg">Titik Evakuasi Nasional</h3>
+        </div>
+        <div class="text-sm space-y-2">
+          <div class="flex justify-between">
+           <span><a href="https://maps.app.goo.gl/GauCQ2zY9ap2j3uX9" class="text-blue-500 hover:underline">Stadion Utama Gelora Bung Karno, Jakarta</a></span>
+          </div>
+          <div class="flex justify-between">
+            <span><a href="https://maps.app.goo.gl/GauCQ2zY9ap2j3uX9" class="text-blue-500 hover:underline">lapangan Karebosi, Makasar</a></span>
+          </div>
+          <div class="flex justify-between">
+            <span><a href="https://maps.app.goo.gl/GauCQ2zY9ap2j3uX9" class="text-blue-500 hover:underline">Gedung Sate</a></span>
+          </div>
+        </div>
+          </div>
+
+          <!-- Emergency Contacts -->
+          <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+        <div class="text-center mb-4">
+          <i class="fas fa-phone-alt text-3xl text-green-500 mb-2"></i>
+          <h3 class="font-semibold text-lg">Kontak Darurat</h3>
+        </div>
+        <div class="text-sm space-y-2">
+          <div class="flex justify-between items-center">
+            <span>BNPB</span>
+            <a href="tel:117" class="text-green-600 hover:underline">(021) 29827793</a>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>BPBD Kota Bandung</span>
+            <a href="tel:0224207333" class="text-green-600 hover:underline">022-4207333</a>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Ambulans</span>
+            <a href="tel:119" class="text-green-600 hover:underline">119</a>
+          </div>
+        </div>
+          </div>
+        </div>
+      </section>
+    
+    <section id="safety-tips" class="mb-12 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg shadow-lg p-8">
+    <h2 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">
+        Tips Keselamatan Bencana
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div class="flex items-center space-x-4 bg-white p-5 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
+            <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full">
+                <i class="fas fa-house-crack text-blue-500 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-gray-800">Gempa Bumi</h3>
+                <p class="text-gray-600 text-sm">
+                    Berlindung di bawah meja kokoh, jauhi jendela dan benda yang dapat jatuh.
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4 bg-white p-5 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
+            <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-sky-100 rounded-full">
+                <i class="fas fa-water text-sky-500 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-gray-800">Banjir</h3>
+                <p class="text-gray-600 text-sm">
+                    Hindari berjalan atau mengemudi di area banjir, segera pindah ke tempat yang lebih tinggi.
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4 bg-white p-5 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
+            <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-red-100 rounded-full">
+                <i class="fas fa-fire text-red-500 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-gray-800">Kebakaran</h3>
+                <p class="text-gray-600 text-sm">
+                    Gunakan kain basah untuk menutupi pernapasan dan segera keluar dari area berbahaya.
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4 bg-white p-5 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
+            <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-yellow-100 rounded-full">
+          <i class="fas fa-mountain text-yellow-500 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-gray-800">Tanah Longsor</h3>
+                <p class="text-gray-600 text-sm">
+                    Hindari lereng curam saat hujan deras dan waspadai tanda-tanda pergerakan tanah.
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4 bg-white p-5 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
+            <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-red-100 rounded-full">
+          <img src="img/mountain.png" alt="Erupsi Gunung" class="w-8 h-8">
+            </div>
+            <div>
+          <h3 class="font-bold text-lg text-gray-800">Erupsi Gunung</h3>
+          <p class="text-gray-600 text-sm">
+              Gunakan masker untuk melindungi dari abu vulkanik dan ikuti arahan evakuasi resmi.
+          </p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4 bg-white p-5 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
+            <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-green-100 rounded-full">
+                <i class="fas fa-wind text-green-500 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-gray-800">Angin Puting Beliung</h3>
+                <p class="text-gray-600 text-sm">
+                    Segera cari tempat berlindung yang kokoh, jauhi jendela, dan hindari berada di luar rumah.
+                </p>
+            </div>
+        </div>
+
+    </div> 
+  </section>
+  </main>
+    <!-- FAQ Icon with Popup -->
+    <div class="fixed bottom-4 right-4">
+      <button
+      id="faqButton"
+      class="p-4 rounded-full shadow-lg focus:outline-none hover:shadow-xl hover:scale-110 hover:bg-gray-800 transition-transform transition-shadow"
+      aria-label="FAQ"
+      >
+      <img src="img/faq.png" alt="FAQ Icon" class="w-8 h-8" />
+      </button>
+    </div>
+
+    <div
+      id="faqPopup"
+      class="fixed bottom-20 right-4 bg-white shadow-lg rounded-lg p-4 w-72 hidden z-50"
+    >
+      <h3 class="text-lg font-bold text-gray-800 mb-2">FAQ</h3>
+      <ul class="text-sm text-gray-600 space-y-2">
+        <li>
+          <strong>Q:</strong> Bagaimana cara melaporkan bencana?<br />
+          <strong>A:</strong> Klik tombol "Lapor Bencana" di halaman utama.
+        </li>
+        <li>
+          <strong>Q:</strong> Apa itu SIGAP?<br />
+          <strong>A:</strong> Sistem Informasi Gempa dan Antisipasi Bencana.
+        </li>
+        <li>
+          <strong>Q:</strong> Bagaimana cara melacak laporan?<br />
+          <strong>A:</strong> Masukkan Tracking ID di bagian "Cek Status Laporan".
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      const faqButton = document.getElementById("faqButton");
+      const faqPopup = document.getElementById("faqPopup");
+
+      faqButton.addEventListener("click", () => {
+        faqPopup.classList.toggle("hidden");
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!faqButton.contains(event.target) && !faqPopup.contains(event.target)) {
+          faqPopup.classList.add("hidden");
+        }
+      });
+    </script>
+  
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+      <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-4 gap-8">
+          <div>
+            <h3 class="font-bold mb-4">SIGAP</h3>
+            <p class="text-gray-400 text-sm">
+              Sistem Informasi Gempa dan Antisipasi Bencana untuk masyarakat
+              Indonesia.
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold mb-4">Layanan</h3>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li>
+                <a href="#report" class="hover:text-white">Lapor Bencana</a>
+              </li>
+              <li>
+                <a href="#map-section" class="hover:text-white">Peta Bencana</a>
+              </li>
+              <li>
+                <a href="#tracking" class="hover:text-white"
+                  >Tracking Laporan</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-bold mb-4">Informasi</h3>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li>
+                <a href="#info" class="hover:text-white">Edukasi Bencana</a>
+              </li>
+                <li><a href="#safety-tips" class="hover:text-white">Tips Keselamatan</a></li>
+                <li><a href="#" class="hover:text-white" onclick="event.preventDefault(); document.getElementById('faqPopup').classList.toggle('hidden')">FAQ</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-bold mb-4">Kontak</h3>
+            <div class="text-sm text-gray-400 space-y-2">
+              <p>Email: info@sigap.go.id</p>
+              <p>WhatsApp: +62 811-2233-4455</p>
+              <div class="flex space-x-4 mt-2">
+                <a href="#" class="hover:text-white"
+                  ><i class="fab fa-facebook"></i
+                ></a>
+                <a href="#" class="hover:text-white"
+                  ><i class="fab fa-twitter"></i
+                ></a>
+                <a href="#" class="hover:text-white"
+                  ><i class="fab fa-instagram"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-400"
+        >
+          <p>
+            © 2025 SIGAP - Sistem Informasi Gempa dan Antisipasi Bencana. All
+            rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div
+      id="successModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-lg p-6 max-w-md mx-4">
+        <div class="text-center">
+          <i class="fas fa-check-circle text-green-500 text-5xl mb-4"></i>
+          <h3 class="text-xl font-bold mb-2">Laporan Berhasil Dikirim!</h3>
+          <p class="text-gray-600 mb-4">
+            Tracking ID Anda:
+            <span class="font-mono text-red-600">SIGAP20240615001</span>
+          </p>
+          <p class="text-sm text-gray-500 mb-4">
+            Gunakan tracking ID ini untuk memantau status laporan Anda.
+          </p>
+          <button
+            onclick="closeModal()"
+            class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+    
+
+      // Variabel global untuk kamera
+      let currentStream = null;
+      let photoLatitude = null;
+      let photoLongitude = null;
+      let usingFrontCamera = false;
+
+      // Initialize map
+      function initMap() {
+        const map = L.map("map").setView([-6.9147, 107.6098], 13); // Bandung coordinates
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap contributors",
+        }).addTo(map);
+
+        // Sample disaster markers
+        const disasters = [
+          {
+            lat: -6.9147,
+            lng: 107.6098,
+            type: "gempa",
+            magnitude: "5.8",
+            title: "Gempa Bandung",
+          },
+          {
+            lat: -6.9185,
+            lng: 107.6193,
+            type: "banjir",
+            title: "Banjir Cihampelas",
+          },
+          {
+            lat: -6.9082,
+            lng: 107.5958,
+            type: "kebakaran",
+            title: "Kebakaran Pasar",
+          },
+        ];
+
+        disasters.forEach((disaster) => {
+          let color = "#ef4444"; // red for earthquake
+          if (disaster.type === "banjir") color = "#3b82f6"; // blue for flood
+          if (disaster.type === "kebakaran") color = "#f97316"; // orange for fire
+
+          const marker = L.circleMarker([disaster.lat, disaster.lng], {
+            color: color,
+            fillColor: color,
+            fillOpacity: 0.7,
+            radius: 10,
+          }).addTo(map);
+
+          marker.bindPopup(`
+                    <strong>${disaster.title}</strong><br>
+                    ${
+                      disaster.magnitude
+                        ? "Magnitude: " + disaster.magnitude + " SR<br>"
+                        : ""
+                    }
+                    Status: <span class="text-red-600">Waspada</span>
+                `);
+        });
+      }
+
+      // Get current location
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              document.getElementById("latitude").value =
+                position.coords.latitude.toFixed(6);
+              document.getElementById("longitude").value =
+                position.coords.longitude.toFixed(6);
+            },
+            (error) => {
+              alert(
+                "Tidak dapat mendapatkan lokasi. Pastikan GPS aktif dan izin diberikan."
+              );
+            }
+          );
+        } else {
+          alert("Browser tidak mendukung geolocation.");
+        }
+      }
+
+      // Start camera
+      async function startCamera() {
+        try {
+          // Stop current stream if exists
+          if (currentStream) {
+            currentStream.getTracks().forEach((track) => track.stop());
+          }
+
+          const constraints = {
+            video: {
+              facingMode: usingFrontCamera ? "user" : "environment",
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+            },
+          };
+
+          const stream = await navigator.mediaDevices.getUserMedia(constraints);
+          const video = document.getElementById("video");
+          video.srcObject = stream;
+          currentStream = stream;
+        } catch (error) {
+          console.error("Error accessing camera:", error);
+          alert("Tidak dapat mengakses kamera: " + error.message);
+        }
+      }
+
+      // Switch camera
+      function switchCamera() {
+        usingFrontCamera = !usingFrontCamera;
+        startCamera();
+      }
+
+      // Capture photo
+      function capturePhoto() {
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set canvas size to match video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw video frame to canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Get image data URL
+        const imageDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+
+        // Show preview
+        const previewImg = document.getElementById("previewImage");
+        previewImg.src = imageDataUrl;
+        document.getElementById("photoPreview").classList.remove("hidden");
+
+        // Get location
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              photoLatitude = position.coords.latitude;
+              photoLongitude = position.coords.longitude;
+
+              // Update location info
+              document.getElementById(
+                "photoLocationInfo"
+              ).innerHTML = `<i class="fas fa-check-circle"></i> Lokasi terdeteksi: ${photoLatitude.toFixed(
+                6
+              )}, ${photoLongitude.toFixed(6)}`;
+
+              // Auto-fill location fields if empty
+              if (!document.getElementById("latitude").value) {
+                document.getElementById("latitude").value =
+                  photoLatitude.toFixed(6);
+                document.getElementById("longitude").value =
+                  photoLongitude.toFixed(6);
+              }
+            },
+            (error) => {
+              document.getElementById(
+                "photoLocationInfo"
+              ).innerHTML = `<i class="fas fa-exclamation-triangle text-yellow-500"></i> Lokasi tidak dapat diakses: ${error.message}`;
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+          );
+        } else {
+          document.getElementById(
+            "photoLocationInfo"
+          ).innerHTML = `<i class="fas fa-exclamation-triangle text-yellow-500"></i> Browser tidak mendukung geolocation`;
+        }
+      }
+
+      // Retake photo
+      function retakePhoto() {
+        document.getElementById("photoPreview").classList.add("hidden");
+        photoLatitude = null;
+        photoLongitude = null;
+      }
+
+      // Check tracking
+      function checkTracking() {
+        const trackingId = document.getElementById("trackingInput").value;
+        if (trackingId) {
+          document.getElementById("trackingResult").classList.remove("hidden");
+        } else {
+          alert("Masukkan Tracking ID terlebih dahulu.");
+        }
+      }
+
+      // Form submission
+      document
+        .getElementById("reportForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Validate photo was taken
+          if (
+            !document.getElementById("previewImage").src ||
+            document.getElementById("previewImage").src === ""
+          ) {
+            alert("Harap ambil foto terlebih dahulu untuk validasi laporan.");
+            return;
+          }
+
+          // Validate location
+          if (!photoLatitude || !photoLongitude) {
+            alert(
+              "Lokasi foto tidak tersedia. Pastikan GPS aktif dan izin diberikan."
+            );
+            return;
+          }
+
+          document.getElementById("successModal").classList.remove("hidden");
+        });
+
+      function closeModal() {
+        document.getElementById("successModal").classList.add("hidden");
+      }
+
+      // Initialize on load
+      document.addEventListener("DOMContentLoaded", function () {
+        initMap();
+        startCamera();
+
+        // Event listeners for camera buttons
+        document
+          .getElementById("captureBtn")
+          .addEventListener("click", capturePhoto);
+        document
+          .getElementById("switchCamera")
+          .addEventListener("click", switchCamera);
+        document
+          .getElementById("retakeBtn")
+          .addEventListener("click", retakePhoto);
+
+        // Request camera permission
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices
+            .getUserMedia({ video: true })
+            .then(() => {
+              console.log("Camera access granted");
+            })
+            .catch((err) => {
+              console.error("Camera access denied:", err);
+            });
+        }
+      });
+    </script>
+  </body>
+</html>

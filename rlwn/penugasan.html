@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Penugasan - Aplikasi Relawan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="font-sans antialiased bg-slate-50 text-slate-800">
+    <div class="flex h-screen">
+      <aside class="w-64 bg-white p-6 flex flex-col border-r border-slate-200">
+        <div
+          class="text-2xl font-bold text-slate-900 mb-10 flex items-center space-x-3"
+        >
+          <div class="bg-indigo-600 p-2 rounded-lg">
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <span>RelawanApp</span>
+        </div>
+        <nav class="flex flex-col space-y-2">
+          <a
+            href="dashboard.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+              ></path>
+            </svg>
+            <span>Dashboard</span>
+          </a>
+          <a
+            href="penugasan.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-indigo-50 text-indigo-600 font-semibold"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              ></path>
+            </svg>
+            <span>Daftar Tugas</span>
+          </a>
+          <a
+            href="update-status.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              ></path>
+            </svg>
+            <span>Update Status</span>
+          </a>
+        </nav>
+        <div class="mt-auto">
+          <a
+            href="profil.html"
+            class="flex items-center space-x-3 p-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium"
+          >
+            <img
+              src="https://via.placeholder.com/40x40/ffcb00/ffffff?text=U"
+              alt="Foto Profil"
+              class="w-10 h-10 rounded-full"
+            />
+            <div>
+              <p class="font-semibold text-sm text-slate-800">Budi Sanjaya</p>
+              <p class="text-xs text-slate-500">Relawan - Palembang</p>
+            </div>
+          </a>
+        </div>
+      </aside>
+
+      <main class="flex-1 overflow-y-auto p-8">
+        <header class="flex items-center justify-between mb-8">
+          <h1 class="text-3xl font-bold text-slate-900">Daftar Penugasan</h1>
+          <input
+            type="text"
+            placeholder="Cari tugas..."
+            class="w-1/3 px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </header>
+
+        <div class="bg-white p-6 rounded-xl border border-slate-200">
+          <div class="overflow-x-auto">
+            <table class="min-w-full">
+              <thead class="border-b border-slate-200">
+                <tr>
+                  <th
+                    class="py-3 px-4 text-left text-xs font-medium text-slate-500 uppercase"
+                  >
+                    Prioritas
+                  </th>
+                  <th
+                    class="py-3 px-4 text-left text-xs font-medium text-slate-500 uppercase"
+                  >
+                    Tugas
+                  </th>
+                  <th
+                    class="py-3 px-4 text-left text-xs font-medium text-slate-500 uppercase"
+                  >
+                    Lokasi
+                  </th>
+                  <th
+                    class="py-3 px-4 text-left text-xs font-medium text-slate-500 uppercase"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="py-3 px-4 text-left text-xs font-medium text-slate-500 uppercase"
+                  >
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-4 px-4">
+                    <span
+                      class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-600"
+                      >Mendesak</span
+                    >
+                  </td>
+                  <td class="py-4 px-4 text-sm font-medium text-slate-800">
+                    Evakuasi Warga Terjebak Banjir
+                  </td>
+                  <td class="py-4 px-4 text-sm text-slate-600">
+                    Kertapati, Palembang
+                  </td>
+                  <td class="py-4 px-4">
+                    <span
+                      class="px-3 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-600"
+                      >Baru</span
+                    >
+                  </td>
+                  <td class="py-4 px-4">
+                    <a
+                      href="detail-tugas.html"
+                      class="font-medium text-indigo-600 hover:underline"
+                      >Lihat Detail</a
+                    >
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-4 px-4">
+                    <span
+                      class="px-3 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-600"
+                      >Penting</span
+                    >
+                  </td>
+                  <td class="py-4 px-4 text-sm font-medium text-slate-800">
+                    Distribusi Logistik & Makanan
+                  </td>
+                  <td class="py-4 px-4 text-sm text-slate-600">
+                    Sako, Palembang
+                  </td>
+                  <td class="py-4 px-4">
+                    <span
+                      class="px-3 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-600"
+                      >Proses</span
+                    >
+                  </td>
+                  <td class="py-4 px-4">
+                    <a
+                      href="detail-tugas.html"
+                      class="font-medium text-indigo-600 hover:underline"
+                      >Lihat Detail</a
+                    >
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50 opacity-70">
+                  <td class="py-4 px-4">
+                    <span
+                      class="px-3 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-600"
+                      >Normal</span
+                    >
+                  </td>
+                  <td class="py-4 px-4 text-sm font-medium text-slate-800">
+                    Pendataan Kerusakan Rumah
+                  </td>
+                  <td class="py-4 px-4 text-sm text-slate-600">
+                    Kalidoni, Palembang
+                  </td>
+                  <td class="py-4 px-4">
+                    <span
+                      class="px-3 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-600"
+                      >Selesai</span
+                    >
+                  </td>
+                  <td class="py-4 px-4">
+                    <a
+                      href="detail-tugas.html"
+                      class="font-medium text-indigo-600 hover:underline"
+                      >Lihat Detail</a
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

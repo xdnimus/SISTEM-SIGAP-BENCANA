@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Koordinasi Bantuan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#4F46E5",
+              "primary-light": "#EEF2FF",
+              success: "#10B981",
+              "success-light": "#ECFDF5",
+              warning: "#F59E0B",
+              "warning-light": "#FFFBEB",
+              danger: "#EF4444",
+              "danger-light": "#FEF2F2",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="font-sans antialiased bg-slate-100 text-slate-800">
+    <div class="flex h-screen overflow-hidden">
+      <aside class="w-64 bg-slate-800 text-white p-6 flex flex-col">
+        <div class="text-2xl font-bold mb-6 flex items-center space-x-3">
+          <span class="mx-auto">Admin Panel</span>
+        </div>
+        <nav class="flex flex-col space-y-2">
+          <a
+            href="#dashboard"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-slate-700 font-semibold"
+            ><svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+              ></path></svg
+            ><span>Dashboard</span></a
+          >
+          <a
+            href="validasi_bnpb.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 font-medium"
+            ><svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path></svg
+            ><span>Validasi Laporan</span></a
+          >
+          <a
+            href="penugasan_bnpb.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 font-medium"
+            ><svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              ></path></svg
+            ><span>Buat Penugasan</span></a
+          >
+          <a
+            href="/sigap/index.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 font-medium"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5a2 2 0 10-4 0v1"
+              ></path>
+            </svg>
+            <span>Logout</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="flex-1 overflow-y-auto p-8">
+        <h1 class="text-3xl font-bold text-slate-900 mb-8">
+          Admin Dashboard: Koordinasi Bencana
+        </h1>
+
+        <section id="dashboard" class="mb-10">
+          <h2 class="text-xl font-semibold text-slate-800 mb-4">
+            Ringkasan Operasi
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200">
+              <p class="text-sm text-slate-500">Relawan Aktif</p>
+              <p class="text-3xl font-bold">78</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-slate-200">
+              <p class="text-sm text-slate-500">Tugas Berjalan</p>
+              <p class="text-3xl font-bold">25</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-slate-200">
+              <p class="text-sm text-slate-500">Laporan Masuk</p>
+              <p class="text-3xl font-bold">134</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-slate-200">
+              <p class="text-sm text-slate-500">Laporan Perlu Validasi</p>
+              <p class="text-3xl font-bold text-danger">12</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <section id="chart">
+            <h2 class="text-xl font-semibold text-slate-800 mb-4">
+              Grafik Ringkasan Operasi
+            </h2>
+            <div
+              class="bg-white p-6 rounded-xl border border-slate-200 flex justify-center"
+              style="max-width: 100%"
+            >
+              <canvas
+                id="summaryChart"
+                style="max-width: 100%; height: auto"
+              ></canvas>
+            </div>
+          </section>
+          <section id="notifikasi">
+            <h2 class="text-xl font-semibold text-slate-800 mb-4">
+              Kirim Notifikasi Cepat
+            </h2>
+            <form
+              class="bg-white p-6 rounded-xl border border-slate-200 space-y-4"
+            >
+              <div>
+                <label for="notif-level" class="text-sm font-medium"
+                  >Tingkat Urgensi</label
+                >
+                <select
+                  id="notif-level"
+                  class="w-full mt-1 px-3 py-2 rounded-lg border border-slate-300"
+                >
+                  <option value="info" class="text-blue-500">
+                    Informasi Umum
+                  </option>
+                  <option value="waspada" class="text-amber-500">
+                    Peringatan (Waspada)
+                  </option>
+                  <option value="bahaya" class="text-red-500">
+                    Peringatan (BAHAYA)
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label for="notif-message" class="text-sm font-medium"
+                  >Pesan Notifikasi</label
+                >
+                <textarea
+                  id="notif-message"
+                  rows="7"
+                  class="w-full mt-1 px-3 py-2 rounded-lg border border-slate-300"
+                  placeholder="Contoh: Waspada kenaikan debit air di Sungai Musi. Tim di sekitar bantaran sungai harap siaga."
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                class="w-full px-6 py-3 rounded-lg bg-danger text-white font-semibold hover:bg-red-600"
+              >
+                Kirim Notifikasi ke Semua Tim
+              </button>
+            </form>
+          </section>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+          const ctx = document.getElementById("summaryChart").getContext("2d");
+          const summaryChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: [
+                "Relawan Aktif",
+                "Tugas Berjalan",
+                "Laporan Masuk",
+                "Perlu Validasi",
+              ],
+              datasets: [
+                {
+                  label: "Jumlah",
+                  data: [78, 25, 134, 12],
+                  backgroundColor: ["#4F46E5", "#10B981", "#F59E0B", "#EF4444"],
+                  borderColor: ["#4F46E5", "#10B981", "#F59E0B", "#EF4444"],
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: false,
+                },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
+        </script>
+      </main>
+    </div>
+  </body>
+</html>
