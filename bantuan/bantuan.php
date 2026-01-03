@@ -14,9 +14,9 @@
         }
         .hero {
             background: #007bff;
-            color: white;
+            color: white; 
             padding: 60px 20px;
-            text-align: center;
+            text-align: center; 
         }
         .hero h1 {
             margin: 0;
